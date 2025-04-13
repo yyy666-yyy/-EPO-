@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>破译“红色密码”—EPO兴奋剂的科学真相与青少年运动员的抉择</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: #fff5dc;
+            font-family: "Comic Sans MS", "Arial Rounded MT Bold", cursive;
+            height: 100%;
+        }
+
+        video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            z-index: 1;
+        }
+
+        .popup-box {
+            display: none;
+            position: fixed;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 440px;
+            padding: 24px;
+            background: linear-gradient(to bottom, #fdfdfd, #fef2d8);
+            border: 6px solid #ff0000;
+            border-radius: 24px;
+            box-shadow: 0 0 12px 6px rgba(0,0,0,0.25), inset 0 0 6px #000;
+            z-index: 10;
+            animation: pop-in 0.4s ease-out;
+            text-align: center;
+        }
+
+        .popup-box h2 {
+            font-size: 22px;
+            color: #0033cc;
+            text-shadow: 2px 2px #fff;
+        }
+
+        .popup-box button {
+            margin-top: 15px;
+            padding: 12px 24px;
+            background-color: #ffcc00;
+            border: 3px solid #000;
+            border-radius: 16px;
+            color: #000;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px #cc9900;
+        }
+
+        .popup-box button:hover {
+            background-color: #ffdd44;
+            transform: scale(1.05);
+        }
+
+        .quiz-box button {
+            display: block;
+            margin: 10px auto;
+            width: 80%;
+        }
+
+        #feedback {
+            margin-top: 12px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        @keyframes pop-in {
+            from {
+                opacity: 0;
+                transform: scale(0.7) translateX(-50%);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateX(-50%);
+            }
+        }
+
+        .confetti {
+            position: fixed;
+            width: 12px;
+            height: 12px;
+            background-color: #ffcc00;
+            top: -20px;
+            animation: fall 3s linear infinite;
+            z-index: 999;
+            border-radius: 50%;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(110vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        #qr-container {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #fff;
+            padding: 0;
+            border: 6px solid #0033cc;
+            border-radius: 20px;
+            text-align: center;
+            z-index: 999;
+        }
+
+        #qr-container img {
+            display: block;
+            width: auto;
+            height: auto;
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        #qr-container a {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #ff3333;
+            color: white;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: bold;
+            border: 2px solid #000;
+            margin-top: 10px;
+        }
+
+        #qr-container a:hover {
+            background: #ff6666;
+        }
+    </style>
+</head>
+<body>
+
+<video id="video" autoplay controls>
+    <source src="426008f3d46b6c7e4b18ce00d7f6c2d1.mp4" type="video/mp4">
+    你的浏览器不支持 video 标签。
+</video>
+
+<!-- 弹窗1 -->
+<div id="popup" class="popup-box">
+    <h2>点击揭开EPO真相！</h2>
+    <button onclick="closePopup()">开始吧！</button>
+</div>
+
+<!-- 答题弹窗 -->
+<div id="quiz" class="popup-box quiz-box">
+    <h2>EPO（促红细胞生成素）属于哪一类兴奋剂？</h2>
+    <button onclick="checkAnswer('A')">A. 精神刺激剂</button>
+    <button onclick="checkAnswer('B')">B. 麻醉剂</button>
+    <button onclick="checkAnswer('C')">C. 利尿剂</button>
+    <button onclick="checkAnswer('D')">D. 血液型兴奋剂</button>
+    <p id="feedback"></p>
+</div>
+
+<!-- 承诺弹窗 -->
+<div id="finalPopup" class="popup-box">
+    <h2>点击签署承诺！</h2>
+    <button onclick="closeFinal()">我承诺！</button>
+</div>
+
+<!-- 二维码 -->
+<div id="qr-container">
+    <h2>恭喜你获得「反EPO徽章」！</h2>
+    <img src="badge-image(1).png" alt="扫描领取徽章">
+    <a href="badge-image.png" download="反EPO徽章.png">📥 扫码领取或点击下载徽章</a>
+</div>
+
+<script>
+    const video = document.getElementById('video');
+    const popup = document.getElementById('popup');
+    const quiz = document.getElementById('quiz');
+    const finalPopup = document.getElementById('finalPopup');
+    const feedback = document.getElementById('feedback');
+    const qrContainer = document.getElementById('qr-container');
+
+    let popupShown = false;
+    let quizShown = false;
+    let finalPopupShown = false;
+
+    video.ontimeupdate = function () {
+        const time = video.currentTime;
+
+        if (time >= 54 && !popupShown) {
+            video.pause();
+            popup.style.display = 'block';
+            popupShown = true;
+        }
+
+        if (time >= 60 && !quizShown) {
+            video.pause();
+            quiz.style.display = 'block';
+            quizShown = true;
+        }
+
+        if (time >= 139 && !finalPopupShown) {
+            video.pause();
+            finalPopup.style.display = 'block';
+            finalPopupShown = true;
+        }
+    };
+
+    function closePopup() {
+        popup.style.display = 'none';
+        video.play();
+    }
+
+    function checkAnswer(answer) {
+        if (answer === 'D') {
+            feedback.textContent = 'BINGO！答对啦 🎉';
+            feedback.style.color = '#00aa00';
+            showConfetti();
+            setTimeout(() => {
+                quiz.style.display = 'none';
+                video.play();
+            }, 1500);
+        } else {
+            feedback.textContent = '再试试吧！';
+            feedback.style.color = 'red';
+        }
+    }
+
+    function closeFinal() {
+        finalPopup.style.display = 'none';
+        video.play();
+    }
+
+    video.onended = function () {
+        qrContainer.style.display = 'block';
+    };
+
+    function showConfetti() {
+        for (let i = 0; i < 40; i++) {
+            const confetti = document.createElement('div');
+            confetti.classList.add('confetti');
+            confetti.style.left = Math.random() * 100 + 'vw';
+            confetti.style.backgroundColor = randomColor();
+            confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+            document.body.appendChild(confetti);
+            setTimeout(() => confetti.remove(), 3000);
+        }
+    }
+
+    function randomColor() {
+        const colors = ['#ffcc00', '#ff6666', '#66ccff', '#0033cc', '#ff0000'];
+        return colors[Math.floor(Math.random() * colors.length)];
+    }
+</script>
+
+</body>
+</html>
