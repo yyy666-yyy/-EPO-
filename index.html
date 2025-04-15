@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>破译“红色密码”—EPO兴奋剂的科学真相与青少年运动员的抉择</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: #fff5dc;
+      font-family: "Comic Sans MS", "Arial Rounded MT Bold", cursive;
+    }
+    video {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 1;
+    }
+    .popup-box {
+      display: none;
+      position: fixed;
+      top: 20%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      max-width: 440px;
+      padding: 24px;
+      background: linear-gradient(to bottom, #fdfdfd, #fef2d8);
+      border: 6px solid #ff0000;
+      border-radius: 24px;
+      box-shadow: 0 0 12px 6px rgba(0,0,0,0.25), inset 0 0 6px #000;
+      z-index: 10;
+      animation: pop-in 0.4s ease-out;
+      text-align: center;
+    }
+    .popup-box h2 {
+      font-size: 22px;
+      color: #0033cc;
+      text-shadow: 2px 2px #fff;
+    }
+    .popup-box button {
+      margin-top: 15px;
+      padding: 12px 24px;
+      background-color: #ffcc00;
+      border: 3px solid #000;
+      border-radius: 16px;
+      color: #000;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 4px #cc9900;
+    }
+    .popup-box button:hover {
+      background-color: #ffdd44;
+      transform: scale(1.05);
+    }
+    .quiz-box button {
+      display: block;
+      margin: 10px auto;
+      width: 80%;
+    }
+    #feedback {
+      margin-top: 12px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    @keyframes pop-in {
+      from {
+        opacity: 0;
+        transform: scale(0.7) translateX(-50%);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1) translateX(-50%);
+      }
+    }
+    .confetti {
+      position: fixed;
+      width: 12px;
+      height: 12px;
+      background-color: #ffcc00;
+      top: -20px;
+      animation: fall 3s linear infinite;
+      z-index: 999;
+      border-radius: 50%;
+    }
+    @keyframes fall {
+      to {
+        transform: translateY(110vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    #qr-container {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #fff;
+      padding: 0;
+      border: 6px solid #0033cc;
+      border-radius: 20px;
+      text-align: center;
+      z-index: 999;
+    }
+
+    #qr-container img {
+      display: block;
+      max-width: 100%;
+      max-height: 100%;
+    }
+
+    #qr-download {
+      display: inline-block;
+      padding: 10px 20px;
+      background: #ff3333;
+      color: white;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: bold;
+      border: 2px solid #000;
+      margin-top: 10px;
+    }
+
+    #qr-download:hover {
+      background: #ff6666;
+    }
+
+    #qr-container button {
+      display: block;
+      margin: 10px auto;
+      padding: 10px 20px;
+      background: #0033cc;
+      color: white;
+      border-radius: 10px;
+      border: 2px solid #000;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    #qr-container button:hover {
+      background: #0055ff;
+    }
+  </style>
+</head>
+<body>
+
+<video id="video" autoplay controls>
+  <source src="破译红色密码epo1.mp4" type="video/mp4" />
+  你的浏览器不支持 video 标签。
+</video>
+
+<!-- 弹窗们 -->
+<div id="popup" class="popup-box">
+  <h2>点击揭开EPO真相！</h2>
+  <button onclick="closePopup()">开始吧！</button>
+</div>
+
+<div id="quiz" class="popup-box quiz-box">
+  <h2>关于EPO（促红细胞生成素）的描述，以下说法正确的是：</h2>
+  <button onclick="checkAnswer('A')">A. EPO是一种合法的运动辅助药物，可以安全地用于提高运动表现。</button>
+  <button onclick="checkAnswer('B')">B. EPO能够刺激骨髓制造更多的红细胞，从而增加血液的携氧能力。</button>
+  <button onclick="checkAnswer('C')">C. 使用EPO不会对身体造成任何副作用，是一种理想的耐力增强剂。</button>
+  <button onclick="checkAnswer('D')">D. EPO的使用对运动员来说只有好处，没有坏处。</button>
+  <p id="feedback"></p>
+</div>
+
+<div id="finalPopup" class="popup-box">
+  <h2>拒绝红色诱惑，坚守公平信仰</h2>
+  <button onclick="showCommitment()">我承诺！</button>
+</div>
+
+<div id="commitmentPopup" class="popup-box">
+  <h2>已成功签署电子承诺书</h2>
+  <button onclick="closeCommitment()">点击加入“Say No 行动”！</button>
+</div>
+
+<!-- 二维码弹窗 -->
+<div id="qr-container">
+  <h2>恭喜你获得「反EPO徽章」！</h2>
+  <img src="badge-image(1).png" alt="扫描领取徽章">
+  <a id="qr-download" href="badge-image.png" download="反EPO徽章.png">📥 扫码领取或点击下载徽章</a>
+  <button onclick="closeQr()">返回视频</button>
+</div>
+
+<script>
+  const video = document.getElementById('video');
+  const popup = document.getElementById('popup');
+  const quiz = document.getElementById('quiz');
+  const finalPopup = document.getElementById('finalPopup');
+  const commitmentPopup = document.getElementById('commitmentPopup');
+  const feedback = document.getElementById('feedback');
+  const qrContainer = document.getElementById('qr-container');
+  const qrDownload = document.getElementById('qr-download');
+
+  let popupShown = false;
+  let quizShown = false;
+  let finalPopupShown = false;
+  let firstQRTriggered = false;
+  let hasInteractedWithQR = false;
+  let lastVideoTime = 0;
+
+  video.ontimeupdate = function () {
+    const time = video.currentTime;
+
+    if (time >= 59.49 && !popupShown) {
+      video.pause();
+      popup.style.display = 'block';
+      popupShown = true;
+    }
+
+    if (time >= 109.54 && !quizShown) {
+      video.pause();
+      quiz.style.display = 'block';
+      quizShown = true;
+    }
+
+    if (time >= 175.08 && !finalPopupShown) {
+      video.pause();
+      finalPopup.style.display = 'block';
+      finalPopupShown = true;
+    }
+
+    // 简版二维码触发点
+    if (time >= 182 && time < 182.6 && !hasInteractedWithQR && !firstQRTriggered) {
+      showQr(false); // 显示简化版
+      firstQRTriggered = true;
+    }
+  };
+
+  // 视频播放结束后显示完整版二维码
+  video.onended = function () {
+    showQr(true); // 显示完整版
+  };
+
+  function closePopup() {
+    popup.style.display = 'none';
+    video.play();
+  }
+
+  function checkAnswer(answer) {
+    if (answer === 'B') {
+      feedback.textContent = 'BINGO！答对啦 🎉';
+      feedback.style.color = '#00aa00';
+      showConfetti();
+      setTimeout(() => {
+        quiz.style.display = 'none';
+        video.play();
+      }, 1500);
+    } else {
+      feedback.textContent = '错误！解析：' + getExplanation(answer);
+      feedback.style.color = 'red';
+      document.body.style.animation = 'flash-red 0.5s';
+      setTimeout(() => document.body.style.animation = '', 500);
+    }
+  }
+
+  function getExplanation(answer) {
+    const explanations = {
+      'A': 'EPO属于兴奋剂，是被国际体育组织明令禁止的非法药物。',
+      'C': '使用EPO会导致严重的副作用，如血液浓稠、血栓形成等。',
+      'D': 'EPO的使用对运动员来说有严重的健康风险。'
+    };
+    return explanations[answer] || '';
+  }
+
+  function showCommitment() {
+    finalPopup.style.display = 'none';
+    commitmentPopup.style.display = 'block';
+  }
+
+  function closeCommitment() {
+    commitmentPopup.style.display = 'none';
+    video.play();
+  }
+
+  function showQr(showFull) {
+    qrContainer.style.display = 'block';
+    video.pause();
+    lastVideoTime = video.currentTime;
+    qrDownload.style.display = showFull ? 'inline-block' : 'none';
+  }
+
+  function closeQr() {
+    qrContainer.style.display = 'none';
+    hasInteractedWithQR = true;
+    video.currentTime = lastVideoTime;
+    video.play();
+  }
+
+  function showConfetti() {
+    for (let i = 0; i < 40; i++) {
+      const confetti = document.createElement('div');
+      confetti.classList.add('confetti');
+      confetti.style.left = Math.random() * 100 + 'vw';
+      confetti.style.backgroundColor = randomColor();
+      confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+      document.body.appendChild(confetti);
+      setTimeout(() => confetti.remove(), 3000);
+    }
+  }
+
+  function randomColor() {
+    const colors = ['#ffcc00', '#ff6666', '#66ccff', '#0033cc', '#ff0000'];
+    return colors[Math.floor(Math.random() * colors.length)];
+  }
+</script>
+</body>
+</html>
